@@ -1,0 +1,14 @@
+//
+// Created by firrez on 12/4/23.
+//
+
+#ifndef WALKAWAKE_BACKEND_ALARMTRIGGER_HPP
+#define WALKAWAKE_BACKEND_ALARMTRIGGER_HPP
+
+
+class AlarmTrigger {
+
+};
+
+
+#endif //WALKAWAKE_BACKEND_ALARMTRIGGER_HPP

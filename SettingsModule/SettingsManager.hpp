@@ -1,0 +1,14 @@
+//
+// Created by firrez on 12/4/23.
+//
+
+#ifndef WALKAWAKE_BACKEND_SETTINGSMANAGER_HPP
+#define WALKAWAKE_BACKEND_SETTINGSMANAGER_HPP
+
+
+class SettingsManager {
+
+};
+
+
+#endif //WALKAWAKE_BACKEND_SETTINGSMANAGER_HPP

@@ -1,0 +1,14 @@
+//
+// Created by firrez on 12/4/23.
+//
+
+#ifndef WALKAWAKE_BACKEND_CAMERAMANAGER_HPP
+#define WALKAWAKE_BACKEND_CAMERAMANAGER_HPP
+
+
+class CameraManager {
+
+};
+
+
+#endif //WALKAWAKE_BACKEND_CAMERAMANAGER_HPP
