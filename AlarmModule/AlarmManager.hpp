@@ -6,7 +6,7 @@
 using namespace std;
 
 
-struct alarm {
+struct Alarm {
     string day;
     string time;
     bool enabled;
@@ -18,11 +18,13 @@ namespace AlarmModule
     public:
         AlarmManager();
         int UpdateAlarms(string m_strAlarms);
-        string get_alarms();
-        int trigger_callback();
+        string GetAlarms();
+        int TriggerCallback();
+        virtual ~AlarmManager();
 
     private:
-        void set_trigger();
-        void activate_alarm();
+        CameraModule::CameraManager cameraManager;
+        void SetTrigger();
+        void ActivateAlarm();
     };
 }
