@@ -7,12 +7,10 @@ using namespace CameraModule;
 using json = nlohmann::json;
 
 struct ApiObject {
-    ApiObject(string name, int confidence) {
+    explicit ApiObject(string name) {
         this->name = std::move(name);
-        this->confidence = confidence;
     }
     string name;
-    int confidence;
 };
 
 CameraManager::CameraManager() {
@@ -34,8 +32,7 @@ int CameraManager::CompareTargetResponse(const string& m_strTarget, const string
     for (auto m_jsonObject : m_jsonObjects)
     {
         ApiObject m_aobTempObject {
-            m_jsonObject["name"].template get<string>(),
-            m_jsonObject["confidence"].template get<int>()
+            m_jsonObject["name"].template get<string>()
         };
         m_vecObjects.push_back(m_aobTempObject);
     }
