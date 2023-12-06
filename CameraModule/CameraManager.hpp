@@ -1,14 +1,19 @@
-//
-// Created by firrez on 12/4/23.
-//
+#pragma once
 
-#ifndef WALKAWAKE_BACKEND_CAMERAMANAGER_HPP
-#define WALKAWAKE_BACKEND_CAMERAMANAGER_HPP
+#include <string>
+#include "ApiCaller.hpp"
 
+using namespace std;
 
-class CameraManager {
+namespace CameraModule {
 
-};
+    class CameraManager {
+    public:
+        CameraManager();
+        int VerifyImage(const string& m_strTarget);
 
-
-#endif //WALKAWAKE_BACKEND_CAMERAMANAGER_HPP
+    private:
+        ApiCaller apiCaller;
+        static int CompareTargetResponse(const string& m_strTarget, const string& m_strApiResult);
+    };
+}
