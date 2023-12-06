@@ -10,10 +10,10 @@ namespace CameraModule {
     class CameraManager {
     public:
         CameraManager();
-
+        int VerifyImage(const string& m_strTarget);
 
     private:
         ApiCaller apiCaller;
-        int CompareTargetResponse(string m_strTarget, string m_strApiResult);
+        static int CompareTargetResponse(const string& m_strTarget, const string& m_strApiResult);
     };
 }
