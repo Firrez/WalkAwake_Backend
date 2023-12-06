@@ -11,6 +11,7 @@ namespace CameraModule {
     public:
         CameraManager();
         int VerifyImage(const string& m_strTarget);
+        virtual ~CameraManager();
 
     private:
         ApiCaller apiCaller;

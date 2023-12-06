@@ -47,3 +47,5 @@ int CameraManager::CompareTargetResponse(const string& m_strTarget, const string
     }
     return EXIT_FAILURE;
 }
+
+CameraManager::~CameraManager() = default;
