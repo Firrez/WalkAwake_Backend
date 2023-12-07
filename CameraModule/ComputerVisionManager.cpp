@@ -1,4 +1,4 @@
-#include "CameraManager.hpp"
+#include "ComputerVisionManager.hpp"
 #include <nlohmann/json.hpp>
 #include <utility>
 #include <vector>
@@ -13,17 +13,17 @@ struct ApiObject {
     string name;
 };
 
-CameraManager::CameraManager() {
+ComputerVisionManager::ComputerVisionManager() {
     apiCaller = ApiCaller();
 }
 
 
-int CameraManager::VerifyImage(const string& m_strTarget) {
-    string m_strApiResult = apiCaller.VerifyImageOnline();
+int ComputerVisionManager::VerifyImage(const string& m_strTarget, const string& m_strImagePath) {
+    string m_strApiResult = apiCaller.PostImageOnline(m_strImagePath.c_str());
     return CompareTargetResponse(m_strTarget, m_strApiResult);
 }
 
-int CameraManager::CompareTargetResponse(const string& m_strTarget, const string& m_strApiResult) {
+int ComputerVisionManager::CompareTargetResponse(const string& m_strTarget, const string& m_strApiResult) {
     json m_jsonApiResult = json::parse(m_strApiResult);
     auto m_jsonData = m_jsonApiResult["data"];
     auto m_jsonObjects = m_jsonData["objects"];
@@ -45,4 +45,4 @@ int CameraManager::CompareTargetResponse(const string& m_strTarget, const string
     return EXIT_FAILURE;
 }
 
-CameraManager::~CameraManager() = default;
+ComputerVisionManager::~ComputerVisionManager() = default;
