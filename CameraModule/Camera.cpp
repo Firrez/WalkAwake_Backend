@@ -3,27 +3,86 @@
 //
 
 #include "Camera.hpp"
+#include <cstdlib>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <thread>
+#include <chrono>
 
-CameraModule::Camera::Camera() {
+using namespace std;
+using namespace CameraModule;
+
+
+Camera::Camera() {
+    running = false;
 
 }
 
-void CameraModule::Camera::CaptureImage() {
+string Camera::CaptureImage(const string& savePath) {
 
+    string fileName = "image_capture";
+    string command = "libcamera-still";
+    string parameters = "-0";
+    string extension = ".jpg";
+
+    stringstream formattedString;
+    formattedString << command << " " << parameters << " " << savePath << fileName << extension;
+    // test print
+    cout << formattedString.str() << endl;
+
+    system(formattedString.str().c_str());
+
+    stringstream returnString;
+    returnString << savePath << fileName << extension;
+    return returnString.str();
 }
 
-bool CameraModule::Camera::StartLiveFeed() {
-    return false;
+void Camera::liveFeedLoop() {
+    int targetFPS = 15;
+    int millisecondsDelay = 1000/targetFPS;
+    while (running){
+        auto startTime = chrono::steady_clock::now();
+
+        CaptureImage(liveFeedPath);
+
+        // some sleep needed to not take up all cpu
+        this_thread::sleep_for(chrono::milliseconds(millisecondsDelay));
+
+        auto endTime = chrono::steady_clock::now();
+
+        auto duration = chrono::duration_cast<chrono::milliseconds>(endTime - startTime);
+        //calculate fps
+        fps = 1000 / (duration.count());
+
+        // adjust delay to get target fps
+        millisecondsDelay += (fps - targetFPS) / 100;
+    }
 }
 
-bool CameraModule::Camera::StopLiveFeed() {
-    return false;
+
+bool Camera::StartLiveFeed(const string& savePath) {
+
+    liveFeedPath = savePath;
+    // Get the start time
+    auto startTime = chrono::steady_clock::now();
+
+    thread myThread(&Camera::liveFeedLoop,this);
+
+    return true;
 }
 
 
-int CameraModule::Camera::GetLiveFeedFPS() {
-    return 0;
+bool Camera::StopLiveFeed() {
+    running = false;
+    return !running;
 }
 
 
-CameraModule::Camera::~Camera() = default;
+int Camera::GetLiveFeedFPS() {
+    return fps;
+}
+
+
+
+Camera::~Camera() = default;

@@ -4,9 +4,8 @@ project(WalkAwake_Backend)
 add_library(waAlarmLib AlarmModule/AlarmManager.cpp AlarmModule/AlarmTrigger.cpp AlarmModule/SoundController.cpp)
 set_target_properties(waAlarmLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-add_library(waCameraLib CameraModule/CameraManager.cpp CameraModule/ApiCaller.cpp
-        CameraModule/Camera.cpp
-        CameraModule/Camera.hpp)
+add_library(waCameraLib CameraModule/CameraManager.cpp CameraModule/ApiCaller.cpp CameraModule/Camera.cpp)
+
 set_target_properties(waCameraLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_library(waSettingsLib SettingsModule/SettingsManager.cpp)
