@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "../CameraModule/CameraManager.hpp"
+#include "../CameraModule/ComputerVisionManager.hpp"
 
 using namespace std;
 
@@ -23,7 +23,7 @@ namespace AlarmModule
         virtual ~AlarmManager();
 
     private:
-        CameraModule::CameraManager cameraManager;
+        CameraModule::ComputerVisionManager cameraManager;
         void SetTrigger();
         void ActivateAlarm();
     };

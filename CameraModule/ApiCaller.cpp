@@ -3,13 +3,12 @@
 
 #define API_ADDR "https://imagerecognize.com/api/v3/"
 #define API_KEY "5Ta7P48b06S91a03caO815U324K01fcB"
-#define IMAGE_PATH "path/to/file"
 
 using namespace CameraModule;
 
 ApiCaller::ApiCaller() = default;
 
-string ApiCaller::VerifyImageOnline() {
+string ApiCaller::PostImageOnline(const char *m_szImagePath) {
     CURL *m_curlClient;
     CURLcode m_ccRes;
 
@@ -33,7 +32,7 @@ string ApiCaller::VerifyImageOnline() {
     curl_formadd(&m_pPost, &m_pLast, CURLFORM_COPYNAME, "type", CURLFORM_COPYCONTENTS, "objects", CURLFORM_END);
     curl_formadd(&m_pPost, &m_pLast, CURLFORM_COPYNAME, "max_labels", CURLFORM_COPYCONTENTS, "5", CURLFORM_END);
     curl_formadd(&m_pPost, &m_pLast, CURLFORM_COPYNAME, "min_confidence", CURLFORM_COPYCONTENTS, "80", CURLFORM_END);
-    curl_formadd(&m_pPost, &m_pLast, CURLFORM_COPYNAME, "file", CURLFORM_FILE, IMAGE_PATH, CURLFORM_END);
+    curl_formadd(&m_pPost, &m_pLast, CURLFORM_COPYNAME, "file", CURLFORM_FILE, m_szImagePath, CURLFORM_END);
     curl_easy_setopt(m_curlClient, CURLOPT_HTTPPOST, m_pPost);
 
     // Response setup
@@ -54,7 +53,7 @@ string ApiCaller::VerifyImageOnline() {
     return m_strResponse;
 }
 
-string ApiCaller::VerifyImageLocal() {
+string ApiCaller::PostImageLocal(char *m_szImagePath) {
     return {};
 }
 

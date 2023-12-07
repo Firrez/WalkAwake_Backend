@@ -4,7 +4,7 @@ using namespace AlarmModule;
 using namespace CameraModule;
 
 AlarmManager::AlarmManager() {
-    cameraManager = CameraManager();
+    cameraManager = ComputerVisionManager();
 }
 
 int AlarmManager::UpdateAlarms(string m_strAlarms) {
