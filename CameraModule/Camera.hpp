@@ -16,18 +16,17 @@ namespace CameraModule {
 
     public:
         Camera();
-        virtual ~Camera();
         string CaptureImage(const string& savePath);
         bool StartLiveFeed(const string& feedPath);
         bool StopLiveFeed();
         int GetLiveFeedFPS();
+        virtual ~Camera();
 
     private:
-        atomic<bool> running;
         string liveFeedPath;
         void liveFeedLoop();
 
-        int fps;
+
     };
 
 }

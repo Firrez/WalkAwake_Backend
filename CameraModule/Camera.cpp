@@ -13,10 +13,11 @@
 using namespace std;
 using namespace CameraModule;
 
+atomic<bool> running;
+atomic<int> currentFPS;
 
 Camera::Camera() {
     running = false;
-
 }
 
 string Camera::CaptureImage(const string& savePath) {
@@ -53,10 +54,10 @@ void Camera::liveFeedLoop() {
 
         auto duration = chrono::duration_cast<chrono::milliseconds>(endTime - startTime);
         //calculate fps
-        fps = 1000 / (duration.count());
+        currentFPS = 1000 / (duration.count());
 
         // adjust delay to get target fps
-        millisecondsDelay += (fps - targetFPS) / 100;
+        millisecondsDelay += (currentFPS - targetFPS);
     }
 }
 
@@ -80,7 +81,7 @@ bool Camera::StopLiveFeed() {
 
 
 int Camera::GetLiveFeedFPS() {
-    return fps;
+    return currentFPS;
 }
 
 
