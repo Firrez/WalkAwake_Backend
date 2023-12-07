@@ -1,14 +1,16 @@
-//
-// Created by firrez on 12/4/23.
-//
+#pragma once
 
-#ifndef WALKAWAKE_BACKEND_ALARMTRIGGER_HPP
-#define WALKAWAKE_BACKEND_ALARMTRIGGER_HPP
+#include <functional>
 
+namespace AlarmModule {
+    class AlarmTrigger {
+    public:
+        AlarmTrigger();
+        int SetAlarm();
+        int RegisterCallback(std::function<void> CallBack);
+        virtual ~AlarmTrigger();
 
-class AlarmTrigger {
+    private:
 
-};
-
-
-#endif //WALKAWAKE_BACKEND_ALARMTRIGGER_HPP
+    };
+}

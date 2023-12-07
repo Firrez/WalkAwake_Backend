@@ -7,11 +7,11 @@ using namespace std;
 
 namespace CameraModule {
 
-    class CameraManager {
+    class ComputerVisionManager {
     public:
-        CameraManager();
-        int VerifyImage(const string& m_strTarget);
-        virtual ~CameraManager();
+        ComputerVisionManager();
+        int VerifyImage(const string& m_strTarget, const string& m_strImagePath);
+        virtual ~ComputerVisionManager();
 
     private:
         ApiCaller apiCaller;

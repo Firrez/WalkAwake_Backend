@@ -10,8 +10,8 @@ namespace CameraModule {
     class ApiCaller {
     public:
         ApiCaller();
-        string VerifyImageOnline();
-        string VerifyImageLocal();
+        string PostImageOnline(const char *m_szImagePath);
+        string PostImageLocal(char *m_szImagePath);
         virtual ~ApiCaller();
 
     private:
