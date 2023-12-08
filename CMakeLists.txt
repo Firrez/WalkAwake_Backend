@@ -8,7 +8,7 @@ set_target_properties(waAlarmLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 add_library(waCameraLib CameraModule/ComputerVisionManager.cpp CameraModule/ApiCaller.cpp)
 set_target_properties(waCameraLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-add_library(waSettingsLib SettingsModule/SettingsManager.cpp)
+add_library(waSettingsLib SettingsModule/SettingsManager.cpp Utils/FileUtil.cpp)
 set_target_properties(waSettingsLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_subdirectory(pybind11)
