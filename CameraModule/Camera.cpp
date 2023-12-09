@@ -23,25 +23,16 @@ Camera::Camera() {
 
 string Camera::CaptureImage(const string& savePath) {
 
-    string fileName = "image_capture";
-
-    string command = "libcamera-still";
-    string width = "--width 800";
-    string height = "--height 480";
-    string parameters = "-o";
-    string extension = ".jpg";
-
-    //libcamera-still --width 9150 --height 6944 -o test.jpg -n -t 1
 
     stringstream formattedString;
-    formattedString << command << " " << width << " " << height << " " << parameters << " " << savePath << fileName << extension << " -n -t 1";
+    formattedString << "libcamera-still --width 800 --height 480 -o " << savePath << "/image_capture.jpg -n -t 1";
     // test print
     cout << formattedString.str() << endl;
 
     system(formattedString.str().c_str());
 
     stringstream returnString;
-    returnString << savePath << fileName << extension;
+    returnString << savePath << "/image_capture.jpg";
     return returnString.str();
 }
 
