@@ -70,7 +70,7 @@ bool Camera::StartLiveFeed(const string& savePath) {
     auto startTime = chrono::steady_clock::now();
 
     thread loopThread(&Camera::liveFeedLoop,this);
-
+    loopThread.detach();
 
     return true;
 }

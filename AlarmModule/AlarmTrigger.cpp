@@ -7,6 +7,8 @@ using namespace AlarmModule;
 using namespace std;
 AlarmTrigger::AlarmTrigger() = default;
 
+atomic<bool> IsActive;
+
 int AlarmTrigger::SetAlarm(const Alarm &m_NextAlarm) {
     if (m_ptrCallBack == nullptr)
         return EXIT_FAILURE;
@@ -16,6 +18,8 @@ int AlarmTrigger::SetAlarm(const Alarm &m_NextAlarm) {
     strptime(m_strNextAlarm.c_str(), "%A %R", m_ptrNextAlarm);
 
     thread clockCheckLoop(&AlarmTrigger::ClockTimer,this, m_ptrNextAlarm);
+
+    clockCheckLoop.detach();
 
     //pthread_create(&m_pthAlarmThread, nullptr, &AlarmTrigger::ClockTimer,this, m_ptrNextAlarm);
     //pthread_detach(m_pthAlarmThread);
