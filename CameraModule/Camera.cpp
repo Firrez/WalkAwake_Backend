@@ -13,8 +13,9 @@
 using namespace std;
 using namespace CameraModule;
 
-atomic<bool> running;
+
 atomic<int> currentFPS;
+atomic<bool> running;
 
 Camera::Camera() {
     running = false;
@@ -68,7 +69,7 @@ bool Camera::StartLiveFeed(const string& savePath) {
     // Get the start time
     auto startTime = chrono::steady_clock::now();
 
-    thread myThread(&Camera::liveFeedLoop,this);
+    thread loopThread(&Camera::liveFeedLoop,this);
 
     return true;
 }
