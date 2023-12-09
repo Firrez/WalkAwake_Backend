@@ -1,30 +1,32 @@
 #pragma once
 
+#include <iostream>
 #include <string>
+#include <functional>
+#include <utility>
+#include <nlohmann/json.hpp>
 #include "../CameraModule/ComputerVisionManager.hpp"
+#include "SoundController.hpp"
+#include "AlarmTrigger.hpp"
 
 using namespace std;
-
-
-struct Alarm {
-    string day;
-    string time;
-    bool enabled;
-};
+using namespace CameraModule;
 
 namespace AlarmModule
 {
     class AlarmManager {
     public:
-        AlarmManager();
-        int UpdateAlarms(string m_strAlarms);
+        explicit AlarmManager(const function<void()>& CallBack);
+        int UpdateAlarms(const string& m_strAlarms);
         string GetAlarms();
-        int TriggerCallback();
         virtual ~AlarmManager();
 
     private:
-        CameraModule::ComputerVisionManager cameraManager;
-        void SetTrigger();
-        void ActivateAlarm();
+        ComputerVisionManager m_CameraManager;
+        static SoundController m_SoundController;
+        AlarmTrigger m_AlarmTrigger;
+        static function<void()> m_UICallBack;
+        static void TriggerCallback();
+        void SetNextAlarm();
     };
 }
