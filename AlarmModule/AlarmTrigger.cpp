@@ -8,8 +8,8 @@ using namespace AlarmModule;
 AlarmTrigger::AlarmTrigger() = default;
 
 int AlarmTrigger::SetAlarm(const Alarm &m_NextAlarm) {
-    if (m_ptrCallBack == nullptr)
-        return EXIT_FAILURE;
+    //if (m_ptrCallBack == nullptr)
+     //  return EXIT_FAILURE;
 
     string m_strNextAlarm = m_NextAlarm.day + " " + m_NextAlarm.time;
     struct tm *m_ptrNextAlarm; //TODO: Find exact date and time & use sleep_until.
