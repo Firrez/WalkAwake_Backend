@@ -1,6 +1,5 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
 #include <functional>
 #include <iostream>
 #include <string>
@@ -11,7 +10,7 @@ struct Alarm {
     Alarm(string day, string time, const string& enabled) {
         this->day = std::move(day);
         this->time = std::move(time);
-        istringstream(enabled) >> boolalpha >> this->enabled;
+        this->enabled = enabled == "enabled";
     };
     string day;
     string time;
