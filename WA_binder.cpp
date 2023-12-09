@@ -1,7 +1,11 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+
 #include "CameraModule/ComputerVisionManager.hpp"
+
 using namespace CameraModule;
 namespace py = pybind11;
+
 
 PYBIND11_MODULE(WalkAwake, m){
     py::class_<ComputerVisionManager>(m, "ComputerVisionManager")

@@ -1,16 +1,29 @@
 #pragma once
 
+#include <nlohmann/json.hpp>
 #include <functional>
+#include <iostream>
 #include <string>
 
 using namespace std;
+
+struct Alarm {
+    Alarm(string day, string time, const string& enabled) {
+        this->day = std::move(day);
+        this->time = std::move(time);
+        istringstream(enabled) >> boolalpha >> this->enabled;
+    };
+    string day;
+    string time;
+    bool enabled{};
+};
 
 namespace AlarmModule {
     class AlarmTrigger {
     public:
         AlarmTrigger();
-        int SetAlarm(const string& m_strNextAlarm);
-        int StopAlarm();
+        int SetAlarm(const Alarm& m_NextAlarm);
+        static int StopAlarm();
         int RegisterCallback(function<void()> CallBack);
         virtual ~AlarmTrigger();
 
