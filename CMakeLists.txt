@@ -13,4 +13,4 @@ set_target_properties(waSettingsLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_subdirectory(pybind11)
 pybind11_add_module(WalkAwake WA_binder.cpp)
-target_link_libraries(WalkAwake PRIVATE waAlarmLib waCameraLib waSettingsLib curl ao mpg123)
+target_link_libraries(WalkAwake PRIVATE waAlarmLib waCameraLib waSettingsLib curl ao mpg123 pthread)

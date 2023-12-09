@@ -7,19 +7,21 @@ using namespace AlarmModule;
 
 AlarmTrigger::AlarmTrigger() = default;
 
-int AlarmTrigger::SetAlarm(const string &m_strNextAlarm) {
+int AlarmTrigger::SetAlarm(const Alarm &m_NextAlarm) {
     if (m_ptrCallBack == nullptr)
         return EXIT_FAILURE;
 
-    struct tm *m_ptrNextAlarm;
+    string m_strNextAlarm = m_NextAlarm.day + " " + m_NextAlarm.time;
+    struct tm *m_ptrNextAlarm; //TODO: Find exact date and time & use sleep_until.
     strptime(m_strNextAlarm.c_str(), "%A %R", m_ptrNextAlarm);
 
     pthread_create(&m_pthAlarmThread, nullptr, ClockTimer, m_ptrNextAlarm);
+    pthread_detach(m_pthAlarmThread);
     return EXIT_SUCCESS;
 }
 
 int AlarmTrigger::StopAlarm() {
-    pthread_join(m_pthAlarmThread, nullptr);
+    IsActive = false;
     return EXIT_SUCCESS;
 }
 
@@ -52,7 +54,6 @@ void *AlarmTrigger::ClockTimer(void *arg1) {
         }
 
     } while (IsActive);
-    pthread_exit(nullptr);
 }
 
 AlarmTrigger::~AlarmTrigger() = default;
