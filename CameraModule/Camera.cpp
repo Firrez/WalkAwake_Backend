@@ -71,6 +71,7 @@ bool Camera::StartLiveFeed(const string& savePath) {
 
     thread loopThread(&Camera::liveFeedLoop,this);
 
+
     return true;
 }
 

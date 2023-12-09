@@ -4,10 +4,8 @@
 #include <utility>
 
 using namespace AlarmModule;
-
+using namespace std;
 AlarmTrigger::AlarmTrigger() = default;
-
-function<void()> m_ptrCallBack;
 
 int AlarmTrigger::SetAlarm(const Alarm &m_NextAlarm) {
     if (m_ptrCallBack == nullptr)
@@ -17,8 +15,10 @@ int AlarmTrigger::SetAlarm(const Alarm &m_NextAlarm) {
     struct tm *m_ptrNextAlarm; //TODO: Find exact date and time & use sleep_until.
     strptime(m_strNextAlarm.c_str(), "%A %R", m_ptrNextAlarm);
 
-    pthread_create(&m_pthAlarmThread, nullptr, ClockTimer, m_ptrNextAlarm);
-    pthread_detach(m_pthAlarmThread);
+    thread clockCheckLoop(&AlarmTrigger::ClockTimer,this, m_ptrNextAlarm);
+
+    //pthread_create(&m_pthAlarmThread, nullptr, &AlarmTrigger::ClockTimer,this, m_ptrNextAlarm);
+    //pthread_detach(m_pthAlarmThread);
     return EXIT_SUCCESS;
 }
 
@@ -32,7 +32,7 @@ int AlarmTrigger::RegisterCallback(function<void()> CallBack) {
     return EXIT_SUCCESS;
 }
 
-void *AlarmTrigger::ClockTimer(void *arg1) {
+void AlarmTrigger::ClockTimer(void *arg1) {
     IsActive = true;
     tm *m_tmAlarm = (tm *) arg1;
     do {

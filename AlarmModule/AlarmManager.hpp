@@ -25,8 +25,8 @@ namespace AlarmModule
         ComputerVisionManager m_CameraManager;
         static SoundController m_SoundController;
         AlarmTrigger m_AlarmTrigger;
-        static function<void()> m_UICallBack;
-        static void TriggerCallback();
+        function<void()> m_UICallBack;
+        void TriggerCallback();
         void SetNextAlarm();
     };
 }

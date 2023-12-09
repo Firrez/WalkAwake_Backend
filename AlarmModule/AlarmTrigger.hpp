@@ -3,6 +3,8 @@
 #include <functional>
 #include <iostream>
 #include <string>
+#include <thread>
+#include <atomic>
 
 using namespace std;
 
@@ -22,14 +24,14 @@ namespace AlarmModule {
     public:
         AlarmTrigger();
         int SetAlarm(const Alarm& m_NextAlarm);
-        static int StopAlarm();
+        int StopAlarm();
         int RegisterCallback(function<void()> CallBack);
         virtual ~AlarmTrigger();
 
     private:
         pthread_t m_pthAlarmThread{};
-        static bool IsActive;
-        static function<void()> m_ptrCallBack;
-        static void *ClockTimer(void *arg1);
+        atomic<bool> IsActive;
+        function<void()> m_ptrCallBack;
+        void ClockTimer(void *arg1);
     };
 }

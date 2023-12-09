@@ -1,5 +1,6 @@
 #include "../Utils/FileUtil.hpp"
 #include "AlarmManager.hpp"
+#include <functional>
 #include <sys/stat.h>
 #include <vector>
 #include <chrono>
@@ -9,6 +10,7 @@
 
 using namespace AlarmModule;
 using namespace CameraModule;
+using namespace std;
 using json = nlohmann::json;
 
 AlarmManager::AlarmManager(const function<void()>& CallBack) {
@@ -16,7 +18,7 @@ AlarmManager::AlarmManager(const function<void()>& CallBack) {
     m_SoundController = SoundController();
     m_AlarmTrigger = AlarmTrigger();
 
-    m_AlarmTrigger.RegisterCallback(TriggerCallback);
+    m_AlarmTrigger.RegisterCallback(bind(&AlarmManager::TriggerCallback,this));
     m_UICallBack = CallBack;
 
     SetNextAlarm();
