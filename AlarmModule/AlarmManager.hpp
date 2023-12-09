@@ -23,7 +23,7 @@ namespace AlarmModule
 
     private:
         ComputerVisionManager m_CameraManager;
-        static SoundController m_SoundController;
+        SoundController m_SoundController;
         AlarmTrigger m_AlarmTrigger;
         function<void()> m_UICallBack;
         void TriggerCallback();
