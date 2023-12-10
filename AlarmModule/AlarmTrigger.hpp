@@ -30,6 +30,7 @@ namespace AlarmModule {
 
     private:
         pthread_t m_pthAlarmThread{};
+        bool IsActive;
         function<void()> m_ptrCallBack;
         void ClockTimer(void *arg1);
     };

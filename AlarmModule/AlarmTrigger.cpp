@@ -7,7 +7,6 @@ using namespace AlarmModule;
 using namespace std;
 AlarmTrigger::AlarmTrigger() = default;
 
-atomic<bool> IsActive;
 
 int AlarmTrigger::SetAlarm(const Alarm &m_NextAlarm) {
     if (m_ptrCallBack == nullptr)
