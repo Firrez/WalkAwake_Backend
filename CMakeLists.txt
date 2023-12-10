@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 project(WalkAwake)
 set(CMAKE_CXX_STANDARD 11)
 
-add_library(waSettingsLib SettingsModule/SettingsManager.cpp Utils/FileUtil.cpp)
+add_library(waSettingsLib SettingsModule/SettingsManager.cpp Utils/FileUtil.cpp Utils/DefaultCache.hpp)
 set_target_properties(waSettingsLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_library(waAlarmLib AlarmModule/SoundController.cpp AlarmModule/AlarmTrigger.cpp AlarmModule/AlarmManager.cpp)

@@ -5,7 +5,7 @@ namespace AlarmModule {
     class SoundController {
     public:
         SoundController();
-        int Play();
+        void Play();
         int Stop();
         virtual ~SoundController();
 

@@ -1,25 +1,23 @@
 #include "../Utils/FileUtil.hpp"
+#include "../Utils/DefaultCache.hpp"
 #include "AlarmManager.hpp"
 #include <functional>
 #include <sys/stat.h>
-#include <vector>
+#include <iterator>
+#include <list>
 #include <chrono>
-
-#define FILES_PATH "data/"
-#define ALARM_FILE_NAME "Alarms.json"
 
 using namespace AlarmModule;
 using namespace CameraModule;
 using namespace std;
 using json = nlohmann::json;
 
-AlarmManager::AlarmManager(const function<void()>& CallBack) {
+AlarmManager::AlarmManager() {
     m_CameraManager = ComputerVisionManager();
     m_SoundController = SoundController();
     m_AlarmTrigger = AlarmTrigger();
 
     m_AlarmTrigger.RegisterCallback(bind(&AlarmManager::TriggerCallback,this));
-    m_UICallBack = CallBack;
 
     SetNextAlarm();
 }
@@ -32,11 +30,17 @@ int AlarmManager::UpdateAlarms(const string& m_strAlarms) {
 }
 
 string AlarmManager::GetAlarms() {
+    string m_strFullPath = FILES_PATH;
+    m_strFullPath.append(ALARM_FILE_NAME);
     struct stat buffer{};
-    if (stat(FILES_PATH, &buffer) != 0)
-        return "err";
+    if (stat(m_strFullPath.c_str(), &buffer) != 0)
+        FileUtil::WriteToFile(FILES_PATH, ALARM_FILE_NAME, DEFAULT_ALARM_STRING);
     json m_jsonAlarms = FileUtil::ReadFromFile(FILES_PATH, ALARM_FILE_NAME);
-    return m_jsonAlarms;
+    return m_jsonAlarms.dump();
+}
+
+void AlarmManager::RegisterCallback(const function<void()>& CallBack) {
+    m_UICallBack = CallBack;
 }
 
 void AlarmManager::TriggerCallback() {
@@ -47,9 +51,9 @@ void AlarmManager::TriggerCallback() {
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "NullDereference"
 void AlarmManager::SetNextAlarm() {
-    json m_jsonAlarms = GetAlarms();
+    json m_jsonAlarms = json::parse(GetAlarms());
     auto m_Alarms = m_jsonAlarms["alarms"];
-    vector<Alarm> m_vecAlarmList;
+    list<Alarm> m_listAlarms;
 
     for (auto m_Alarm : m_Alarms)
     {
@@ -58,7 +62,7 @@ void AlarmManager::SetNextAlarm() {
                 m_Alarm["Time"].template get<string>(),
                 m_Alarm["Enabled"].template get<string>()
         };
-        m_vecAlarmList.push_back(temp);
+        m_listAlarms.push_back(temp);
     }
 
     auto m_tpTime = chrono::system_clock::now();
@@ -66,22 +70,27 @@ void AlarmManager::SetNextAlarm() {
     tm *m_tmCurrentTime = localtime(&m_ttTime);
     int m_iWeekDay = m_tmCurrentTime->tm_wday;
 
-    Alarm *m_NextAlarm = nullptr;
-    int m_iIndex = m_iWeekDay - 1;
+    int m_iIndex;
+    if (m_iWeekDay == 0)
+        m_iIndex = 6;
+    else
+        m_iIndex = m_iWeekDay - 1;
+
+    int m_iEndIndex = m_iIndex;
     do {
-        if (m_vecAlarmList.at(m_iIndex).enabled)
+        auto m_itrAlarmIterator = m_listAlarms.begin();
+        advance(m_itrAlarmIterator, m_iIndex);
+        Alarm m_Alarm = *m_itrAlarmIterator;
+        if (m_Alarm.enabled)
         {
-            *m_NextAlarm = m_vecAlarmList.at(m_iIndex);
+            m_AlarmTrigger.SetAlarm(m_Alarm);
             break;
         }
         m_iIndex = ++m_iIndex % 7;
-    } while (m_iIndex != m_iWeekDay - 1);
+    } while (m_iIndex != m_iEndIndex);
 
-    if (m_NextAlarm != nullptr)
-    {
-        m_AlarmTrigger.SetAlarm(*m_NextAlarm);
-    }
 }
+
 #pragma clang diagnostic pop
 
 AlarmManager::~AlarmManager() = default;

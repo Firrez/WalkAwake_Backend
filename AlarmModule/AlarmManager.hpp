@@ -16,7 +16,8 @@ namespace AlarmModule
 {
     class AlarmManager {
     public:
-        explicit AlarmManager(const function<void()>& CallBack);
+        AlarmManager();
+        void RegisterCallback(const function<void()>&);
         int UpdateAlarms(const string& m_strAlarms);
         string GetAlarms();
         virtual ~AlarmManager();

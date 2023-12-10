@@ -11,7 +11,7 @@ bool m_bPlay;
 
 SoundController::SoundController() = default;
 
-int SoundController::Play() {
+void SoundController::Play() {
     m_bPlay = true;
 
     mpg123_handle *m_mpgHandle;

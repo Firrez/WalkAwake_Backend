@@ -1,34 +1,35 @@
-#include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
+#include <pybind11/pybind11.h>
 
 #include "CameraModule/ComputerVisionManager.hpp"
 #include "AlarmModule/AlarmManager.hpp"
-
-using namespace CameraModule;
-using namespace AlarmModule;
 
 namespace py = pybind11;
 
 
 PYBIND11_MODULE(WalkAwake, m){
-    py::class_<ComputerVisionManager>(m, "ComputerVisionManager")
+    py::module_ cam_module = m.def_submodule("CameraModule", "CameraModule");
+    py::class_<CameraModule::ComputerVisionManager>(cam_module, "ComputerVisionManager")
             .def(py::init<>())
 
-            .def("VerifyImage", &ComputerVisionManager::VerifyImage,
+            .def("VerifyImage", &CameraModule::ComputerVisionManager::VerifyImage,
                  "Target: Find target, ImagePath: to save image captured",
                  py::arg("target"),py::arg("image_path"))
 
-            .def("Start",&ComputerVisionManager::Start,
+            .def("Start",&CameraModule::ComputerVisionManager::Start,
                  "Start the camera live feed", py::arg("image_feed_path"))
 
-            .def("Stop", &ComputerVisionManager::Stop);
+            .def("Stop", &CameraModule::ComputerVisionManager::Stop);
 
-    py::class_<AlarmManager>(m, "AlarmManager")
-            .def(py::init<const std::function<void()> &>())
+    py::module_ alarm_module = m.def_submodule("AlarmModule", "AlarmModule");
+    py::class_<AlarmModule::AlarmManager>(alarm_module, "AlarmManager")
+            .def(py::init<>())
 
-            .def("UpdateAlarms",&AlarmManager::UpdateAlarms,
+            .def("UpdateAlarms",&AlarmModule::AlarmManager::UpdateAlarms,
                  "Update alarms from json", py::arg("alarms_json"))
 
-            .def("GetAlarms", &AlarmManager::GetAlarms);
+            .def("GetAlarms", &AlarmModule::AlarmManager::GetAlarms)
+
+            .def("RegisterCallback", &AlarmModule::AlarmManager::RegisterCallback);
 
 }
