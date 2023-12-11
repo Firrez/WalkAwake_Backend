@@ -3,25 +3,25 @@
 #include <chrono>
 #include <utility>
 
+
 using namespace AlarmModule;
+using namespace std;
 
 AlarmTrigger::AlarmTrigger() = default;
 
-int AlarmTrigger::SetAlarm(const Alarm &m_NextAlarm) {
+int AlarmTrigger::SetAlarm(const time_t& m_NextAlarmEpoch) {
     if (m_ptrCallBack == nullptr)
         return EXIT_FAILURE;
 
-    string m_strNextAlarm = m_NextAlarm.day + " " + m_NextAlarm.time;
-    struct tm *m_ptrNextAlarm; //TODO: Find exact date and time & use sleep_until.
-    strptime(m_strNextAlarm.c_str(), "%A %R", m_ptrNextAlarm);
+    thread clockCheckLoop(&AlarmTrigger::ClockTimer,this, m_NextAlarmEpoch);
 
-    pthread_create(&m_pthAlarmThread, nullptr, ClockTimer, m_ptrNextAlarm);
-    pthread_detach(m_pthAlarmThread);
+    clockCheckLoop.detach();
     return EXIT_SUCCESS;
 }
 
 int AlarmTrigger::StopAlarm() {
-    IsActive = false;
+    inactive = 1;
+    cv.notify_all();
     return EXIT_SUCCESS;
 }
 
@@ -30,30 +30,12 @@ int AlarmTrigger::RegisterCallback(function<void()> CallBack) {
     return EXIT_SUCCESS;
 }
 
-void *AlarmTrigger::ClockTimer(void *arg1) {
-    IsActive = true;
-    tm *m_tmAlarm = (tm *) arg1;
-    do {
-        auto m_tpTime = chrono::system_clock::now();
-        time_t m_ttTime = chrono::system_clock::to_time_t(m_tpTime);
-        tm *m_tmCurrentTime = localtime(&m_ttTime);
-
-        if (m_tmAlarm->tm_wday == m_tmCurrentTime->tm_wday) {
-            if (m_tmAlarm->tm_hour <= m_tmCurrentTime->tm_hour) {
-                if (m_tmAlarm->tm_min <= m_tmCurrentTime->tm_min) {
-                    m_ptrCallBack();
-                    IsActive = false;
-                } else {
-                    this_thread::sleep_for(chrono::seconds(1));
-                }
-            } else {
-                this_thread::sleep_for(chrono::minutes(1));
-            }
-        } else {
-            this_thread::sleep_for(chrono::hours(1));
-        }
-
-    } while (IsActive);
+void AlarmTrigger::ClockTimer(time_t epoch) {
+    inactive = 0;
+    unique_lock<mutex> lk(cv_m);
+    auto m_WaitTime = chrono::system_clock::time_point(chrono::seconds(epoch));
+    if (!cv.wait_until(lk, m_WaitTime, [this](){return inactive == 1;}))
+        m_ptrCallBack();
 }
 
 AlarmTrigger::~AlarmTrigger() = default;

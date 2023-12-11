@@ -3,7 +3,7 @@
 #include <mpg123.h>
 
 #define BITS 8
-#define PATH "../music.mp3"
+#define PATH "music.mp3"
 
 using namespace AlarmModule;
 
@@ -11,7 +11,7 @@ bool m_bPlay;
 
 SoundController::SoundController() = default;
 
-int SoundController::Play() {
+void SoundController::Play() {
     m_bPlay = true;
 
     mpg123_handle *m_mpgHandle;

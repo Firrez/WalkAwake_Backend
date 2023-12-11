@@ -126,13 +126,13 @@ class CMakeBuild(build_ext):
 # The information here can also be placed in setup.cfg - better separation of
 # logic and declaration, and simpler if you include description/version in a file.
 setup(
-    name="wa_test",
-    version="0.0.1",
-    author="Frederik Rasmussen",
-    author_email="fakima@frnet.dk",
-    description="A test project using pybind11 and CMake",
+    name="WalkAwake",
+    version="0.1.0",
+    author="WalkAwake.co",
+    author_email="na",
+    description="WalkAwake backend system",
     long_description="",
-    ext_modules=[CMakeExtension("wa_test")],
+    ext_modules=[CMakeExtension("WalkAwake")],
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
     extras_require={"test": ["pytest>=6.0"]},

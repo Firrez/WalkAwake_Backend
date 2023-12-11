@@ -1,17 +1,19 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
 #include <functional>
 #include <iostream>
 #include <string>
+#include <thread>
+#include <atomic>
+#include <condition_variable>
 
 using namespace std;
 
 struct Alarm {
-    Alarm(string day, string time, const string& enabled) {
+    Alarm(string day, string time, bool enabled) {
         this->day = std::move(day);
         this->time = std::move(time);
-        istringstream(enabled) >> boolalpha >> this->enabled;
+        this->enabled = enabled;
     };
     string day;
     string time;
@@ -22,15 +24,17 @@ namespace AlarmModule {
     class AlarmTrigger {
     public:
         AlarmTrigger();
-        int SetAlarm(const Alarm& m_NextAlarm);
-        static int StopAlarm();
+        int SetAlarm(const time_t& m_NextAlarmEpoch);
+        int StopAlarm();
         int RegisterCallback(function<void()> CallBack);
         virtual ~AlarmTrigger();
 
     private:
-        pthread_t m_pthAlarmThread{};
-        static bool IsActive;
-        static function<void()> m_ptrCallBack;
-        static void *ClockTimer(void *arg1);
+        condition_variable cv;
+        mutex cv_m;
+        atomic<int> inactive{0};
+        function<void()> m_ptrCallBack;
+        void ClockTimer(time_t epoch);
+
     };
 }
