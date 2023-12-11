@@ -3,7 +3,7 @@
 #include <mpg123.h>
 
 #define BITS 8
-#define PATH "../music.mp3"
+#define PATH "music.mp3"
 
 using namespace AlarmModule;
 

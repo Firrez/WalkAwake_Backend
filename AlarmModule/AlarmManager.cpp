@@ -130,7 +130,7 @@ void AlarmManager::SetNextAlarm() {
         Alarm temp {
                 m_Alarm["Day"].template get<string>(),
                 m_Alarm["Time"].template get<string>(),
-                m_Alarm["Enabled"].template get<string>()
+                m_Alarm["Enabled"].template get<bool>()
         };
         m_listAlarms.push_back(temp);
     }

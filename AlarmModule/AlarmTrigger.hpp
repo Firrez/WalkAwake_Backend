@@ -10,10 +10,10 @@
 using namespace std;
 
 struct Alarm {
-    Alarm(string day, string time, const string& enabled) {
+    Alarm(string day, string time, bool enabled) {
         this->day = std::move(day);
         this->time = std::move(time);
-        this->enabled = enabled == "True" || enabled == "true";
+        this->enabled = enabled;
     };
     string day;
     string time;
