@@ -5,6 +5,7 @@
 #include <string>
 #include <thread>
 #include <atomic>
+#include <condition_variable>
 
 using namespace std;
 
@@ -23,15 +24,17 @@ namespace AlarmModule {
     class AlarmTrigger {
     public:
         AlarmTrigger();
-        int SetAlarm(const Alarm& m_NextAlarm);
+        int SetAlarm(const time_t& m_NextAlarmEpoch);
         int StopAlarm();
         int RegisterCallback(function<void()> CallBack);
         virtual ~AlarmTrigger();
 
     private:
-        pthread_t m_pthAlarmThread{};
-        bool IsActive;
+        condition_variable cv;
+        mutex cv_m;
+        atomic<int> inactive{0};
         function<void()> m_ptrCallBack;
-        void ClockTimer(void *arg1);
+        void ClockTimer(time_t epoch);
+
     };
 }

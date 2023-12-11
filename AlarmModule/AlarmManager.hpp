@@ -25,9 +25,12 @@ namespace AlarmModule
     private:
         ComputerVisionManager m_CameraManager;
         SoundController m_SoundController;
-        AlarmTrigger m_AlarmTrigger;
+        AlarmTrigger *m_AlarmTrigger;
         function<void()> m_UICallBack;
         void TriggerCallback();
         void SetNextAlarm();
+        time_t NextAlarmEpoch(const Alarm& m_NextAlarm);
+        time_t GetDayEpoch(const Alarm& m_NextAlarm);
+        int GetSeconds(int hour, int min);
     };
 }

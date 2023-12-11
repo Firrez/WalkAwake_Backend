@@ -11,7 +11,7 @@ namespace CameraModule {
     class ComputerVisionManager {
     public:
         ComputerVisionManager();
-        int VerifyImage(const string& m_strTarget, const string& m_strImagePath);
+        int VerifyImage(const string& m_strTarget);
         bool Start(const string& feedPath);
         bool Stop();
         virtual ~ComputerVisionManager();

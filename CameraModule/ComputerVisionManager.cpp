@@ -1,4 +1,5 @@
 #include "ComputerVisionManager.hpp"
+#include "../Utils/DefaultCache.hpp"
 #include <nlohmann/json.hpp>
 #include <utility>
 #include <vector>
@@ -19,8 +20,8 @@ ComputerVisionManager::ComputerVisionManager() {
 }
 
 
-int ComputerVisionManager::VerifyImage(const string& m_strTarget, const string& m_strImagePath) {
-    string actualSavePath = camera.CaptureImage(m_strImagePath);
+int ComputerVisionManager::VerifyImage(const string& m_strTarget) {
+    string actualSavePath = camera.CaptureImage(FILES_PATH);
     string m_strApiResult = apiCaller.PostImageOnline(actualSavePath.c_str());
     cout << m_strApiResult << endl;
     return CompareTargetResponse(m_strTarget, m_strApiResult);

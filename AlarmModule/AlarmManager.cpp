@@ -6,6 +6,7 @@
 #include <iterator>
 #include <list>
 #include <chrono>
+#include <cstring>
 
 using namespace AlarmModule;
 using namespace CameraModule;
@@ -15,9 +16,9 @@ using json = nlohmann::json;
 AlarmManager::AlarmManager() {
     m_CameraManager = ComputerVisionManager();
     m_SoundController = SoundController();
-    m_AlarmTrigger = AlarmTrigger();
+    m_AlarmTrigger = new AlarmTrigger();
 
-    m_AlarmTrigger.RegisterCallback(bind(&AlarmManager::TriggerCallback,this));
+    m_AlarmTrigger->RegisterCallback(bind(&AlarmManager::TriggerCallback,this));
 
     SetNextAlarm();
 }
@@ -46,6 +47,63 @@ void AlarmManager::RegisterCallback(const function<void()>& CallBack) {
 void AlarmManager::TriggerCallback() {
     m_UICallBack();
     m_SoundController.Play(); //TODO: Needs to run in a separate thread.
+}
+
+time_t AlarmManager::NextAlarmEpoch(const Alarm& m_NextAlarm) {
+    struct tm m_tmAlarmTime{};
+    memset(&m_tmAlarmTime, 0, sizeof(struct tm));
+    strptime(m_NextAlarm.time.c_str(), "%R", &m_tmAlarmTime);
+    time_t m_AlarmDay = GetDayEpoch(m_NextAlarm) + GetSeconds(m_tmAlarmTime.tm_hour, m_tmAlarmTime.tm_min);
+    m_AlarmDay -= m_AlarmDay % 60;
+    return m_AlarmDay;
+}
+
+time_t AlarmManager::GetDayEpoch(const Alarm& m_NextAlarm){
+    struct tm m_tmNextAlarm{};
+    memset(&m_tmNextAlarm, 0, sizeof(struct tm));
+    string m_strNextAlarm = m_NextAlarm.day + " " + m_NextAlarm.time;
+    strptime(m_strNextAlarm.c_str(), "%A %R", &m_tmNextAlarm);
+    int m_iNextAlarmWeekDay = m_tmNextAlarm.tm_wday;
+    int m_iNextAlarmHour = m_tmNextAlarm.tm_hour;
+    int m_iNextAlarmMin = m_tmNextAlarm.tm_min;
+
+    auto checkingDay = chrono::system_clock::now();
+    time_t time_t_checkingDay;
+    tm *tm_checkingDay;
+    for (int offset = 0; offset <= 7; offset++)
+    {
+
+        time_t_checkingDay = chrono::system_clock::to_time_t(checkingDay);
+        tm_checkingDay = localtime(&time_t_checkingDay);
+
+        if (tm_checkingDay->tm_wday == m_iNextAlarmWeekDay)
+        {
+            if (offset == 0)
+            {
+                if (tm_checkingDay->tm_hour < m_iNextAlarmHour)
+                {
+                    time_t m_AlarmDay = time_t_checkingDay - GetSeconds(tm_checkingDay->tm_hour, tm_checkingDay->tm_min);
+                    return m_AlarmDay;
+                }
+                else if (tm_checkingDay->tm_hour == m_iNextAlarmHour && tm_checkingDay->tm_min < m_iNextAlarmMin)
+                {
+                    time_t m_AlarmDay = time_t_checkingDay - GetSeconds(tm_checkingDay->tm_hour, tm_checkingDay->tm_min);
+                    return m_AlarmDay;
+                }
+            }
+            else
+            {
+                time_t m_AlarmDay = time_t_checkingDay - GetSeconds(tm_checkingDay->tm_hour, tm_checkingDay->tm_min);
+                return m_AlarmDay;
+            }
+        }
+
+        checkingDay += chrono::hours(24);
+    }
+}
+
+int AlarmManager::GetSeconds(int hour, int min) {
+    return ((hour * 60) + min) * 60;
 }
 
 #pragma clang diagnostic push
@@ -83,7 +141,7 @@ void AlarmManager::SetNextAlarm() {
         Alarm m_Alarm = *m_itrAlarmIterator;
         if (m_Alarm.enabled)
         {
-            m_AlarmTrigger.SetAlarm(m_Alarm);
+            m_AlarmTrigger->SetAlarm(NextAlarmEpoch(m_Alarm));
             break;
         }
         m_iIndex = ++m_iIndex % 7;
