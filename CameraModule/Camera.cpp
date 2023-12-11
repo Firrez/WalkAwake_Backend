@@ -25,7 +25,7 @@ string Camera::CaptureImage(const string& savePath) {
 
 
     stringstream formattedString;
-    formattedString << "libcamera-still --width 800 --height 480 -o " << savePath << "/image_capture.jpg -n -t 1";
+    formattedString << "libcamera-still --width 1920 --height 1080 -o " << savePath << "/image_capture.jpg -n -t 1";
     // test print
     cout << formattedString.str() << endl;
 
