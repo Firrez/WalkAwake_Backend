@@ -7,6 +7,7 @@
 #include <list>
 #include <chrono>
 #include <cstring>
+#include <thread>
 
 using namespace AlarmModule;
 using namespace CameraModule;
@@ -14,7 +15,8 @@ using namespace std;
 using json = nlohmann::json;
 
 AlarmManager::AlarmManager() {
-    m_CameraManager = ComputerVisionManager();
+    m_bAlarmTriggered = false;
+    m_bSnoozeUsed = false;
     m_SoundController = SoundController();
     m_AlarmTrigger = new AlarmTrigger();
 
@@ -40,12 +42,24 @@ string AlarmManager::GetAlarms() {
     return m_jsonAlarms.dump();
 }
 
-void AlarmManager::RegisterCallback(const function<void()>& CallBack) {
+void AlarmManager::StopAlarm() {
+    m_SoundController.Stop();
+    SetNextAlarm();
+}
+
+int AlarmManager::Snooze() {
+    if (!m_bSnoozeUsed)
+        thread snoozeThread(&AlarmManager::SnoozeWaiter, this);
+}
+
+void AlarmManager::RegisterCallback(const function<void(string)>& CallBack) {
     m_UICallBack = CallBack;
 }
 
 void AlarmManager::TriggerCallback() {
-    m_UICallBack();
+    m_bAlarmTriggered = true;
+    m_bSnoozeUsed = false;
+    m_UICallBack("trigger_alarm");
     m_SoundController.Play(); //TODO: Needs to run in a separate thread.
 }
 
@@ -106,8 +120,6 @@ int AlarmManager::GetSeconds(int hour, int min) {
     return ((hour * 60) + min) * 60;
 }
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "NullDereference"
 void AlarmManager::SetNextAlarm() {
     json m_jsonAlarms = json::parse(GetAlarms());
     auto m_Alarms = m_jsonAlarms["alarms"];
@@ -149,6 +161,12 @@ void AlarmManager::SetNextAlarm() {
 
 }
 
-#pragma clang diagnostic pop
+void AlarmManager::SnoozeWaiter() {
+    m_bSnoozeUsed = true;
+    m_SoundController.Stop();
+    this_thread::sleep_for(chrono::minutes(5));
+    if (m_bAlarmTriggered)
+        m_SoundController.Play();
+}
 
 AlarmManager::~AlarmManager() = default;

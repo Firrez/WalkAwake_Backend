@@ -13,7 +13,7 @@ struct Alarm {
     Alarm(string day, string time, const string& enabled) {
         this->day = std::move(day);
         this->time = std::move(time);
-        this->enabled = enabled == "True";
+        this->enabled = enabled == "True" || enabled == "true";
     };
     string day;
     string time;

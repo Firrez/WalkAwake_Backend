@@ -14,12 +14,13 @@ PYBIND11_MODULE(WalkAwake, m){
 
             .def("VerifyImage", &CameraModule::ComputerVisionManager::VerifyImage,
                  "Target: Find target, ImagePath: to save image captured",
-                 py::arg("target"),py::arg("image_path"))
+                 py::arg("target"))
 
             .def("Start",&CameraModule::ComputerVisionManager::Start,
-                 "Start the camera live feed", py::arg("image_feed_path"))
+                 "Start the camera live feed [NOT WORKING]", py::arg("image_feed_path"))
 
-            .def("Stop", &CameraModule::ComputerVisionManager::Stop);
+            .def("Stop", &CameraModule::ComputerVisionManager::Stop,
+                 "Stop the camera live feed [NOT WORKING]");
 
     py::module_ alarm_module = m.def_submodule("AlarmModule", "AlarmModule");
     py::class_<AlarmModule::AlarmManager>(alarm_module, "AlarmManager")
@@ -30,6 +31,12 @@ PYBIND11_MODULE(WalkAwake, m){
 
             .def("GetAlarms", &AlarmModule::AlarmManager::GetAlarms)
 
-            .def("RegisterCallback", &AlarmModule::AlarmManager::RegisterCallback);
+            .def("RegisterCallback", &AlarmModule::AlarmManager::RegisterCallback)
+
+            .def("StopAlarm", &AlarmModule::AlarmManager::StopAlarm,
+                 "Stops alarm, and set next if any.")
+
+             .def("Snooze", &AlarmModule::AlarmManager::Snooze,
+                  "Snooze alarm for 5 minutes. Works once per alarm.");
 
 }
