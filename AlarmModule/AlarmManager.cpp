@@ -48,8 +48,10 @@ void AlarmManager::StopAlarm() {
 }
 
 int AlarmManager::Snooze() {
-    if (!m_bSnoozeUsed)
+    if (!m_bSnoozeUsed) {
         thread snoozeThread(&AlarmManager::SnoozeWaiter, this);
+        snoozeThread.detach();
+    }
 }
 
 void AlarmManager::RegisterCallback(const function<void(string)>& CallBack) {
