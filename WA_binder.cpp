@@ -13,7 +13,7 @@ PYBIND11_MODULE(WalkAwake, m){
             .def(py::init<>())
 
             .def("VerifyImage", &CameraModule::ComputerVisionManager::VerifyImage,
-                 "Target: Find target, ImagePath: to save image captured",
+                 "Target: Find target",
                  py::arg("target"))
 
             .def("Start",&CameraModule::ComputerVisionManager::Start,
