@@ -37,7 +37,8 @@ string AlarmManager::GetAlarms() {
     m_strFullPath.append(ALARM_FILE_NAME);
     struct stat buffer{};
     if (stat(m_strFullPath.c_str(), &buffer) != 0)
-        FileUtil::WriteToFile(FILES_PATH, ALARM_FILE_NAME, DEFAULT_ALARM_STRING);
+        json m_jsonAlarms = json::parse(DEFAULT_ALARM_STRING);
+        FileUtil::WriteToFile(FILES_PATH, ALARM_FILE_NAME, m_jsonAlarms);
     json m_jsonAlarms = FileUtil::ReadFromFile(FILES_PATH, ALARM_FILE_NAME);
     return m_jsonAlarms.dump();
 }
