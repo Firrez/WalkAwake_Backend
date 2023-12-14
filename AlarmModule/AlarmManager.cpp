@@ -48,8 +48,10 @@ void AlarmManager::StopAlarm() {
 }
 
 int AlarmManager::Snooze() {
-    if (!m_bSnoozeUsed)
+    if (!m_bSnoozeUsed) {
         thread snoozeThread(&AlarmManager::SnoozeWaiter, this);
+        snoozeThread.detach();
+    }
 }
 
 void AlarmManager::RegisterCallback(const function<void(string)>& CallBack) {
@@ -121,6 +123,7 @@ int AlarmManager::GetSeconds(int hour, int min) {
 }
 
 void AlarmManager::SetNextAlarm() {
+
     json m_jsonAlarms = json::parse(GetAlarms());
     auto m_Alarms = m_jsonAlarms["alarms"];
     list<Alarm> m_listAlarms;
@@ -140,25 +143,27 @@ void AlarmManager::SetNextAlarm() {
     tm *m_tmCurrentTime = localtime(&m_ttTime);
     int m_iWeekDay = m_tmCurrentTime->tm_wday;
 
-    int m_iIndex;
-    if (m_iWeekDay == 0)
-        m_iIndex = 6;
-    else
-        m_iIndex = m_iWeekDay - 1;
-
-    int m_iEndIndex = m_iIndex;
+    int m_iIndex = m_iWeekDay;
     do {
         auto m_itrAlarmIterator = m_listAlarms.begin();
         advance(m_itrAlarmIterator, m_iIndex);
         Alarm m_Alarm = *m_itrAlarmIterator;
         if (m_Alarm.enabled)
         {
-            m_AlarmTrigger->SetAlarm(NextAlarmEpoch(m_Alarm));
-            break;
+            struct tm m_tmNextAlarm{};
+            memset(&m_tmNextAlarm, 0, sizeof(struct tm));
+            strptime(m_Alarm.time.c_str(), "%R", &m_tmNextAlarm);
+
+            int hour = m_tmNextAlarm.tm_hour;
+            int min = m_tmNextAlarm.tm_min;
+            if (m_iIndex != m_iWeekDay || GetSeconds(hour, min) > GetSeconds(m_tmCurrentTime->tm_hour, m_tmCurrentTime->tm_min)) {
+                auto m_AlarmEpoch = NextAlarmEpoch(m_Alarm);
+                m_AlarmTrigger->SetAlarm(m_AlarmEpoch);
+                break;
+            }
         }
         m_iIndex = ++m_iIndex % 7;
-    } while (m_iIndex != m_iEndIndex);
-
+    } while (m_iIndex != m_iWeekDay);
 }
 
 void AlarmManager::SnoozeWaiter() {
